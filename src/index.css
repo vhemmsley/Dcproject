@@ -1,0 +1,11 @@
+/* google font and other  import */
+
+/* tailwind base , componenets , utilities -- @import 'tailwindcss'; v3*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+}
