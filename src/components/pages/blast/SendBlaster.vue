@@ -507,19 +507,14 @@ export default {
       pollInterval: null,
 
       domains: [
-        { domain: 'maulfaq.online', apiKey: 're_ECbt48yn_HvogtYFGCbgWcu4n8yN3RvMg' },
-        { domain: 'eventfarm.ng', apiKey: 're_UuafV5Ku_4BzrNWvoPBkzusBtsJrkU7Hj' },
-        { domain: 'sendoraio.online', apiKey: 're_SDVENxgv_QBwRFHvDrkKKeujSBTdtxW2m' },
-        { domain: 'coredispatch.online', apiKey: 're_PfYXYHGA_PBTi4rf5tkFj13HKjdLtqZrg' },
-        { domain: 'mailnexio.online', apiKey: 're_Wt3xKfZ4_HrAU832Xwns5FTDVmGQE1zkW' },
-        // new domains
-        { domain: 'btchyperlive.online', apiKey: 're_dHUprrHp_NHEeP69qL5hr5LZMUsm4FRFZ' },
-        { domain: 'vledem-yfaq.online', apiKey: 're_6h69FDEn_8qfRa9BuRzB56N4N4ovpj9GN' },
-        { domain: 'mailzillapro.online', apiKey: 're_M5WaWK4X_K5oCrkXhYuJVndKBPvXBMghy' },
-        { domain: 'hostmailerpro.online', apiKey: 're_6fQ79DPd_5k3XHyMX3DAw89nFecs35TmE' },
-        //  { domain: 'sendmailsx.online', apiKey: 're_FvchtvoQ_K5gGSCQTqchS5TjYCuJJxN9W' },
-        { domain: 'perfectmailer.online', apiKey: 're_TEhZoVrf_C3r2rMwnHhzRofFu8GL1riQ8' },
-        { domain: 'sendermailio.online', apiKey: 're_FxDaRfAH_6r8u8rpqCLHGgXT6n8MwmJAQ' },
+        { domain: 'MailSentry.com.ng', apiKey: 're_US6wY6Fy_Hmm5nWSmff88srnPJJSSfhVJ', notifyEmail: 'dcproject56@gmail.com' },
+        { domain: 'SendVantage.com.ng', apiKey: 're_UuafV5Ku_4BzrNWvoPBkzusBtsJrkU7Hj', notifyEmail: 'dcproject56@gmail.com' },
+
+        { domain: 'sendoraio.online', apiKey: 're_SDVENxgv_QBwRFHvDrkKKeujSBTdtxW2m', notifyEmail: 'dcproject56@gmail.com' },
+        { domain: 'coredispatch.online', apiKey: 're_PfYXYHGA_PBTi4rf5tkFj13HKjdLtqZrg', notifyEmail: 'dcproject56@gmail.com' },
+        { domain: 'mailnexio.online', apiKey: 're_Wt3xKfZ4_HrAU832Xwns5FTDVmGQE1zkW', notifyEmail: 'dcproject56@gmail.com' },
+        
+        { domain: 'sendmailsx.online', apiKey: 're_FvchtvoQ_K5gGSCQTqchS5TjYCuJJxN9W', notifyEmail: 'deliveryme69@gmail.com' },
       ],
 
       emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
