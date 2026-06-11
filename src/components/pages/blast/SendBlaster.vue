@@ -507,14 +507,7 @@ export default {
       pollInterval: null,
 
       domains: [
-        { domain: 'MailSentry.com.ng', apiKey: 're_US6wY6Fy_Hmm5nWSmff88srnPJJSSfhVJ', notifyEmail: 'dcproject56@gmail.com' },
-        { domain: 'SendVantage.com.ng', apiKey: 're_UuafV5Ku_4BzrNWvoPBkzusBtsJrkU7Hj', notifyEmail: 'dcproject56@gmail.com' },
-
-        { domain: 'sendoraio.online', apiKey: 're_SDVENxgv_QBwRFHvDrkKKeujSBTdtxW2m', notifyEmail: 'dcproject56@gmail.com' },
-        { domain: 'coredispatch.online', apiKey: 're_PfYXYHGA_PBTi4rf5tkFj13HKjdLtqZrg', notifyEmail: 'dcproject56@gmail.com' },
-        { domain: 'mailnexio.online', apiKey: 're_Wt3xKfZ4_HrAU832Xwns5FTDVmGQE1zkW', notifyEmail: 'dcproject56@gmail.com' },
-        
-        { domain: 'sendmailsx.online', apiKey: 're_FvchtvoQ_K5gGSCQTqchS5TjYCuJJxN9W', notifyEmail: 'deliveryme69@gmail.com' },
+        { domain: 'maileroptionpro.online', apiKey: 're_36z2BMjd_HqLdBRAxF7yFsHvutf3DAVYo' },
       ],
 
       emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
