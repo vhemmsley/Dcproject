@@ -10,23 +10,23 @@ const admin = require('firebase-admin')
 const DOMAIN_CONFIG = {
   'maileroptionpro.online': {
     apiKey: 're_36z2BMjd_HqLdBRAxF7yFsHvutf3DAVYo',
-    notifyEmail: 'dcproject56@gmail.com',
+    notifyEmail: 'deliveryme69@gmail.com',
   },
-  'SendVantage.com.ng': {
-    apiKey: 're_UuafV5Ku_4BzrNWvoPBkzusBtsJrkU7Hj',
-    notifyEmail: 'dcproject56@gmail.com',
+  'mailwalker.online': {
+    apiKey: 're_ZFVwfx7X_oPc1AqojsambMBAbSDwfKcUo',
+    notifyEmail: 'deliveryme69@gmail.com',
   },
-  'SendCrestt.com.ng': {
-    apiKey: 're_SDVENxgv_QBwRFHvDrkKKeujSBTdtxW2m',
-    notifyEmail: 'dcproject56@gmail.com',
+  'skymailer.online': {
+    apiKey: 're_ACL94NhZ_EHhuFxMgKbtDHyoRSYnL7piL',
+    notifyEmail: 'deliveryme69@gmail.com',
   },
-  'MailAuraa.com.ng': {
-    apiKey: 're_PfYXYHGA_PBTi4rf5tkFj13HKjdLtqZrg', //done
-    notifyEmail: 'dcproject56@gmail.com',
+  'teammailers.online': {
+    apiKey: 're_gunQE2Rb_61dqkD4m4VJkBkeLk1RcKGbY',
+    notifyEmail: 'deliveryme69@gmail.com',
   },
-  'Vantagemailer.com.ng': {
-    apiKey: 're_Wt3xKfZ4_HrAU832Xwns5FTDVmGQE1zkW',
-     notifyEmail: 'dcproject56@gmail.com',
+  'vantagemailer.online': {
+    apiKey: 're_LxMMKZGD_Dhszctr3ErWEDjPMXvc3YqLC', //done
+    notifyEmail: 'deliveryme69@gmail.com',
   },
 }
 
@@ -636,7 +636,7 @@ exports.sendBlaster = onCall(
 // 2. DISTRIBUTOR
 exports.emailDistributor = onSchedule(
   {
-    schedule: 'every 1 minutes',        // ← Fixed from 'every 30 seconds'
+    schedule: 'every 1 minutes', // ← Fixed from 'every 30 seconds'
     memory: '512MiB',
     timeoutSeconds: 120,
     maxInstances: 1,
@@ -659,7 +659,7 @@ exports.emailDistributor = onSchedule(
 // 3. WORKER 1
 exports.emailWorker1 = onSchedule(
   {
-    schedule: 'every 1 minutes',        // ← Fixed
+    schedule: 'every 1 minutes', // ← Fixed
     memory: '512MiB',
     timeoutSeconds: 300,
     maxInstances: 1,
@@ -672,7 +672,7 @@ exports.emailWorker1 = onSchedule(
 // 4. WORKER 2
 exports.emailWorker2 = onSchedule(
   {
-    schedule: 'every 1 minutes',        // ← Fixed
+    schedule: 'every 1 minutes', // ← Fixed
     memory: '512MiB',
     timeoutSeconds: 300,
     maxInstances: 1,
@@ -686,7 +686,7 @@ exports.emailWorker2 = onSchedule(
 // 5. WORKER 3
 exports.emailWorker3 = onSchedule(
   {
-    schedule: 'every 1 minutes',        // ← Fixed
+    schedule: 'every 1 minutes', // ← Fixed
     memory: '512MiB',
     timeoutSeconds: 300,
     maxInstances: 1,
