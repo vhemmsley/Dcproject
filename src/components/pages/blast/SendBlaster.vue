@@ -12,42 +12,40 @@
           Enterprise-grade email delivery with 3 parallel workers, automatic retries, and real-time
           analytics.
         </p>
-        <div class="flex justify-center gap-4 mt-4 text-sm items-center">
+        <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mt-4 text-xs sm:text-sm">
           <span
-            class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30"
+            class="px-2 sm:px-3 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30"
           >
             ⚡ 3 Parallel Workers
           </span>
           <span
-            class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30"
+            class="px-2 sm:px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30"
           >
-            🔄 Auto-Retry (3x)
+            🔄 Auto-Retry (2x)
           </span>
           <span
-            class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30"
+            class="px-2 sm:px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30"
           >
             📊 Real-time Stats
           </span>
-
-          <!-- Help icon -->
           <a
             href="mailto:deliveryme69@gmail.com"
-            class="text-slate-500 hover:text-blue-400 transition-colors"
-            title="Contact Support"
+            class="px-2 sm:px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 hover:bg-yellow-500/30 transition-colors cursor-pointer inline-flex items-center gap-1"
           >
-            <span
-              class="px-3 flex flex-row py-1 rounded-full bg-purple-500/20 text-yellow-400 border border-yellow-500/30"
+            <span>Support</span>
+            <svg
+              class="w-3.5 h-3.5 sm:w-4 sm:h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              Contact Support
-              <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </span>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
           </a>
         </div>
       </div>
