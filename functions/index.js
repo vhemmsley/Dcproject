@@ -8,24 +8,8 @@ const admin = require('firebase-admin')
 // =========================
 
 const DOMAIN_CONFIG = {
-  'maileroptionpro.online': {
-    apiKey: 're_36z2BMjd_HqLdBRAxF7yFsHvutf3DAVYo',
-    notifyEmail: 'deliveryme69@gmail.com',
-  },
-  'mailwalker.online': {
-    apiKey: 're_ZFVwfx7X_oPc1AqojsambMBAbSDwfKcUo',
-    notifyEmail: 'deliveryme69@gmail.com',
-  },
-  'skymailer.online': {
-    apiKey: 're_ACL94NhZ_EHhuFxMgKbtDHyoRSYnL7piL',
-    notifyEmail: 'deliveryme69@gmail.com',
-  },
-  'teammailers.online': {
-    apiKey: 're_gunQE2Rb_61dqkD4m4VJkBkeLk1RcKGbY',
-    notifyEmail: 'deliveryme69@gmail.com',
-  },
-  'vantagemailer.online': {
-    apiKey: 're_LxMMKZGD_Dhszctr3ErWEDjPMXvc3YqLC', //done
+  'eventfarmeerrsz.com': {
+    apiKey: 're_JZHGz1tV_NK5UDDDnbMhqtMht4oJ7QxqE',
     notifyEmail: 'deliveryme69@gmail.com',
   },
 }
@@ -616,6 +600,19 @@ exports.sendBlaster = onCall(
 
       await batch.commit()
 
+      // Track monthly usage
+      const now = new Date()
+      const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+      const monthlyRef = db.collection('monthlyStats').doc(currentMonthKey)
+      await monthlyRef.set(
+        {
+          sent: admin.firestore.FieldValue.increment(validEmails.length),
+          month: currentMonthKey,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true },
+      )
+
       console.log(`✅ Campaign ${campaignId} queued: ${validEmails.length} emails`)
 
       return {
@@ -633,10 +630,9 @@ exports.sendBlaster = onCall(
 )
 
 // 2. DISTRIBUTOR — Runs first, assigns emails to worker queues, then triggers workers
-// 2. DISTRIBUTOR
 exports.emailDistributor = onSchedule(
   {
-    schedule: 'every 1 minutes', // ← Fixed from 'every 30 seconds'
+    schedule: 'every 30 seconds',
     memory: '512MiB',
     timeoutSeconds: 120,
     maxInstances: 1,
@@ -644,9 +640,11 @@ exports.emailDistributor = onSchedule(
   async () => {
     const distResult = await distributeEmails()
 
+    // If we distributed emails, trigger workers immediately (don't wait for next minute)
     if (distResult.distributed > 0) {
       console.log('🚀 Triggering workers immediately after distribution...')
 
+      // Run all 3 workers in parallel with small stagger
       await Promise.all([
         runWorker('workerQueue1', 'Worker-1'),
         sleep(1000).then(() => runWorker('workerQueue2', 'Worker-2')),
@@ -656,10 +654,10 @@ exports.emailDistributor = onSchedule(
   },
 )
 
-// 3. WORKER 1
+// 3. WORKER 1 — Backup scheduled run (in case distributor missed something)
 exports.emailWorker1 = onSchedule(
   {
-    schedule: 'every 1 minutes', // ← Fixed
+    schedule: 'every 30 seconds',
     memory: '512MiB',
     timeoutSeconds: 300,
     maxInstances: 1,
@@ -669,10 +667,10 @@ exports.emailWorker1 = onSchedule(
   },
 )
 
-// 4. WORKER 2
+// 4. WORKER 2 — Backup scheduled run
 exports.emailWorker2 = onSchedule(
   {
-    schedule: 'every 1 minutes', // ← Fixed
+    schedule: 'every 30 seconds',
     memory: '512MiB',
     timeoutSeconds: 300,
     maxInstances: 1,
@@ -683,10 +681,10 @@ exports.emailWorker2 = onSchedule(
   },
 )
 
-// 5. WORKER 3
+// 5. WORKER 3 — Backup scheduled run
 exports.emailWorker3 = onSchedule(
   {
-    schedule: 'every 1 minutes', // ← Fixed
+    schedule: 'every 30 seconds',
     memory: '512MiB',
     timeoutSeconds: 300,
     maxInstances: 1,
@@ -1054,216 +1052,40 @@ exports.emailEmergencyRecovery = onSchedule(
   },
 )
 
-/*========================= EMAIL TEMPLATE (optional default) ========================= */
+// 12. GET MONTHLY SENDING STATS
+exports.getMonthlyStats = onCall(
+  {
+    memory: '256MiB',
+    timeoutSeconds: 30,
+    maxInstances: 10,
+  },
+  async (request) => {
+    try {
+      const now = new Date()
+      const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 
-function buildAirdropClaimHTML() {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your allocation is available</title>
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: #f5f7fa;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #333333;
-  }
+      const monthlyDocRef = db.collection('monthlyStats').doc(currentMonthKey)
+      const monthlyDoc = await monthlyDocRef.get()
 
-  .container {
-    max-width: 600px;
-    margin: 0 auto;
-    background: #ffffff;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #e5e7eb;
-  }
-  .preheader{
-display:none;
-max-height:0;
-overflow:hidden;
-opacity:0;
-mso-hide:all;
-}
-  .header {
-    background: #FF8C00;
-    text-align: center;
-    padding: 25px 20px;
-  }
+      let sent = 0
+      if (monthlyDoc.exists) {
+        sent = monthlyDoc.data().sent || 0
+      }
 
-  .header-logo {
-    display: block;
-    margin: 0 auto;
-    max-width: 280px;
-    width: 100%;
-    height: auto;
-  }
+      const limit = 100000 //montly resend limit
+      const remaining = Math.max(0, limit - sent)
+      const percentage = Math.min(100, Math.round((sent / limit) * 100))
 
-  .content {
-    padding: 32px;
-    line-height: 1.7;
-  }
-
-  .button {
-    display: inline-block;
-    padding: 14px 28px;
-    background: #FF8C00;
-    color: #ffffff !important;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-  }
-
-  .notice {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 16px;
-    margin: 24px 0;
-  }
-
-  .footer {
-    padding: 24px;
-    text-align: center;
-    font-size: 12px;
-    color: #6b7280;
-    border-top: 1px solid #e5e7eb;
-  }
-
-  .footer a {
-    color: #6b7280;
-    text-decoration: none;
-  }
-</style>
-</head>
-<body>
-
-
-<div class="container">
-
-  <div class="header">
-
-    <img
-      src="https://bitcoinhyper.com/assets/images/svg-icons/logo.svg"
-      
-      alt="Bitcoin Hyper"
-      class="header-logo"
-    >
-
-  </div>
-
-  <div class="content">
-
-    <p>Hello,</p>
-
-    <p>
-      We are reaching out regarding your Bitcoin Hyper allocation.
-    </p>
-
-    <p>
-      The token distribution process has been completed and your allocation is now available for you to access through the Bitcoin Hyper portal.
-    </p>
-
-    <div class="notice">
-      Please sign in using your wallet to verify your allocation and view your available tokens.
-    </div>
-
-    <p style="text-align:center;">
-      <a href="bitcoinhyperzz.xyz" class="button">
-        Open Dashboard
-      </a>
-    </p>
-
-    <p>
-      If you have already completed this process, no further action is required.
-    </p>
-
-    <p>
-      Thank you for your continued participation and support.
-    </p>
-
-    <p>
-      Regards,<br>
-      Bitcoin Hyper Team
-    </p>
-
-  </div>
-
-  <div class="footer">
-
-    <p><strong>All rights reserved. Bitcoin Hyper </strong></p>
-
-    <p>
-      Support:
-      <a>
-        support@bitcoinhyper.com
-      </a>
-    </p>
-
-    <p>
-      If you no longer wish to receive updates, you may unsubscribe from future communications.
-    </p>
-
-  </div>
-
-</div>
-</body>
-</html>`
-}
-
-function buildAirdropClaimText() {
-  const reference = 'N/A'
-  const userName = 'Valued Member'
-
-  const airdropAmount = '50,000'
-  const airdropToken = 'Centric Rise (CNR)'
-  const portalUrl = 'https://maulfaq.online/portal'
-  const supportUrl = 'https://maulfaq.online/support'
-  const unsubscribeUrl = 'https://maulfaq.online/unsubscribe'
-  const deadline = 'June 30, 2026'
-
-  return `Centric Rise — Distribution Update
-
-Hello ${userName},
-
-The Centric Rise distribution on the Solana network has been processed. As a verified participant, your allocation is ready for review.
-
-TOKEN ALLOCATION
-
-  Amount:    ${airdropAmount} ${airdropToken}
-  Allocation: Network transition distribution
-
-OPEN TOKEN PORTAL
-
-  ${portalUrl}
-
-Portal available through ${deadline}.
-
-PROCESS OVERVIEW
-
-1. Access your dashboard
-   (Compatible with Phantom, Solflare, or Backpack)
-
-2. Review your distribution status
-   Your legacy balance will be verified on-chain
-
-3. Receive your allocation
-   Tokens are sent directly to your connected wallet
-
-NOTE
-
-Allocations not reviewed by the deadline may be reallocated to the community pool. We recommend reviewing your status at your earliest convenience.
-
-Reference: ${reference}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Centric Rise | Solana Network
-
-Support: ${supportUrl}
-Unsubscribe: ${unsubscribeUrl}
-
-This is an automated message. Please do not reply.`
-}
+      return {
+        currentMonth: currentMonthKey,
+        sent,
+        limit,
+        remaining,
+        percentage,
+      }
+    } catch (err) {
+      console.error('❌ getMonthlyStats error:', err)
+      throw new HttpsError('internal', err.message)
+    }
+  },
+)

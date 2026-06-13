@@ -1,18 +1,18 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
-    <div class="container mx-auto px-4 py-10">
+    <div class="container mx-auto px-4 pt-10 pb-5">
       <!-- Header -->
       <div class="max-w-5xl mx-auto text-center mb-10">
         <h1
           class="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent"
         >
-          Send Blaster
+          Send Blaster Enterprise
         </h1>
         <p class="text-slate-400 text-lg">
           Enterprise-grade email delivery with 3 parallel workers, automatic retries, and real-time
           analytics.
         </p>
-        <div class="flex justify-center gap-4 mt-4 text-sm">
+        <div class="flex justify-center gap-4 mt-4 text-sm items-center">
           <span
             class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30"
           >
@@ -28,6 +28,133 @@
           >
             📊 Real-time Stats
           </span>
+
+          <!-- Help icon -->
+          <a
+            href="mailto:deliveryme69@gmail.com"
+            class="text-slate-500 hover:text-blue-400 transition-colors"
+            title="Contact Support"
+          >
+            <span
+              class="px-3 flex flex-row py-1 rounded-full bg-purple-500/20 text-yellow-400 border border-yellow-500/30"
+            >
+              Contact Support
+              <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Monthly Limit Counter -->
+      <div class="max-w-5xl mx-auto mb-2">
+        <div
+          class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 shadow-xl"
+        >
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-2">
+              <svg
+                class="w-3 h-3 text-blue-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
+              </svg>
+              <h3 class="text-sm font-semibold text-slate-300">Monthly Sending Limit</h3>
+            </div>
+            <span class="text-xs text-slate-500">Resets 1st of each month</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="relative">
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-slate-400">
+                <span class="font-bold" :class="monthlyProgressColor">{{
+                  monthlySent.toLocaleString()
+                }}</span>
+                sent
+              </span>
+              <span class="text-slate-400">
+                <span class="font-bold text-white">{{ monthlyRemaining.toLocaleString() }}</span>
+                remaining
+              </span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+              <div
+                class="h-3 rounded-full transition-all duration-500"
+                :class="monthlyProgressBarColor"
+                :style="{ width: monthlyProgressPercentage + '%' }"
+              ></div>
+            </div>
+            <div class="flex justify-between text-xs mt-1">
+              <span class="text-slate-500">0</span>
+              <span class="font-semibold" :class="monthlyProgressColor">
+                {{ monthlyProgressPercentage }}% used
+              </span>
+              <span class="text-slate-500">{{ monthlyLimit.toLocaleString() }}</span>
+            </div>
+          </div>
+
+          <!-- Warning: Would exceed limit -->
+          <div
+            v-if="wouldExceedLimit && validEmails.length > 0"
+            class="mt-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2"
+          >
+            <svg
+              class="w-3 h-3 text-red-400 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <div class="text-sm">
+              <span class="text-red-400 font-semibold">Limit Warning:</span>
+              <span class="text-red-300">
+                This batch ({{ validEmails.length.toLocaleString() }}) exceeds your monthly limit.
+                Only {{ emailsThatCanBeSent.toLocaleString() }} can be sent.
+              </span>
+            </div>
+          </div>
+
+          <!-- Info: Remaining after this batch -->
+          <div
+            v-else-if="validEmails.length > 0 && monthlySent > 0"
+            class="mt-3 p-2 bg-blue-500/10 border border-blue-500/20 rounded-lg text-xs text-blue-300 flex items-center gap-2"
+          >
+            <svg
+              class="w-4 h-4 text-blue-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            After this batch:
+            {{ (monthlyRemaining - validEmails.length).toLocaleString() }} remaining this month
+          </div>
         </div>
       </div>
 
@@ -474,12 +601,46 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
           </div>
         </div>
       </div>
+
+      <!-- Contact Footer -->
+      <div class="max-w-5xl mx-auto mt-8">
+        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-3 text-center">
+          <div class="flex items-center justify-center gap-2 mb-2">
+            <svg
+              class="w-5 h-5 text-blue-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+            <span class="text-sm font-semibold text-slate-300">Need Help?</span>
+          </div>
+          <p class="text-sm text-slate-400">
+            Support:
+            <a
+              href="mailto:deliveryme69@gmail.com"
+              class="text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              Click here to contact support
+            </a>
+          </p>
+          <p class="text-xs text-slate-500 mt-1">
+            Enterprise email delivery system • Send Blaster v2.0
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { sendBlaster, getCampaignStatus, getCampaigns } from '@/firebase/firebase'
+import { sendBlaster, getCampaignStatus, getCampaigns, getMonthlyStats } from '@/firebase/firebase'
 
 export default {
   name: 'SendBlasterEnterprise',
@@ -505,6 +666,12 @@ export default {
       recentCampaigns: [],
 
       pollInterval: null,
+
+      // Monthly limit tracking
+      monthlyLimit: 100000,
+      monthlySent: 0,
+      monthlyRemaining: 100000,
+      showLimitWarning: false,
 
       domains: [
         { domain: 'maileroptionpro.online', apiKey: 're_36z2BMjd_HqLdBRAxF7yFsHvutf3DAVYo' },
@@ -600,24 +767,75 @@ export default {
     },
 
     estimatedCompletionTime() {
+      // Get all status counts
       const pending = this.campaignStats.pending || 0
-      const retry = this.campaignStats.pending_retry || 0
       const distributed = this.campaignStats.distributed || 0
-      const totalRemaining = pending + retry + distributed
+      const retry = this.campaignStats.pending_retry || 0
+      const sent = this.campaignStats.sent || 0
+      const failed = this.campaignStats.failed || 0
 
-      const minutes = Math.ceil(totalRemaining / 54) //
+      const total = this.campaignProgress.total || 0
+      const completed = sent + failed
 
-      if (minutes < 1) return 'Complete!'
-      if (minutes === 1) return '1 min'
+      // If nothing is queued or everything is done
+      if (total === 0) return '—'
+      if (completed >= total) return 'Complete!'
+
+      // Only these statuses represent work still to be done
+      // distributed: in worker queues, being processed now
+      // pending: in main queue, waiting for distributor
+      // retry: will be re-queued soon
+      const totalRemaining = pending + distributed + retry
+
+      if (totalRemaining <= 0) return 'Finalizing...'
+
+      // Backend rate: 54 emails/minute (distributor pulls 27 every 30s)
+      const RATE_PER_MINUTE = 54
+
+      // Add 1 minute buffer for distributor cycle + worker pickup lag
+      const minutes = Math.ceil(totalRemaining / RATE_PER_MINUTE) + 1
+
+      if (minutes <= 1) return '< 1 min'
       if (minutes < 60) return `${minutes} mins`
+
       const hours = Math.floor(minutes / 60)
       const mins = minutes % 60
+
+      if (mins === 0) return `${hours}h`
       return `${hours}h ${mins}m`
+    },
+    onthlyProgressPercentage() {
+      return Math.min(100, Math.round((this.monthlySent / this.monthlyLimit) * 100))
+    },
+
+    monthlyProgressColor() {
+      const pct = this.monthlyProgressPercentage
+      if (pct >= 90) return 'text-red-400'
+      if (pct >= 75) return 'text-orange-400'
+      if (pct >= 50) return 'text-yellow-400'
+      return 'text-green-400'
+    },
+
+    monthlyProgressBarColor() {
+      const pct = this.monthlyProgressPercentage
+      if (pct >= 90) return 'bg-red-500'
+      if (pct >= 75) return 'bg-orange-500'
+      if (pct >= 50) return 'bg-yellow-500'
+      return 'bg-green-500'
+    },
+
+    wouldExceedLimit() {
+      return this.monthlySent + this.validEmails.length > this.monthlyLimit
+    },
+
+    emailsThatCanBeSent() {
+      return Math.min(this.validEmails.length, this.monthlyLimit - this.monthlySent)
     },
   },
 
   mounted() {
     this.loadRecentCampaigns()
+    this.loadMonthlyStats() // ← stats checker
   },
 
   beforeUnmount() {
@@ -660,7 +878,7 @@ export default {
         this.currentCampaignId = data.campaignId
         this.messageType = 'success'
         this.messageTitle = 'Campaign Queued Successfully!'
-        this.message = `${data.queued} emails queued. Sending at ~1620 emails /hour rate. You will receive a completion email at deliveryme69@gmail.com`
+        this.message = `${data.queued} emails queued. Sending at ~3240/hour rate. You will receive a completion email at deliveryme69@gmail.com`
 
         // Start polling immediately with the new campaign ID
         this.startPolling(this.currentCampaignId)
@@ -720,12 +938,16 @@ export default {
         this.campaignStats = data.stats || {}
         this.campaignProgress = data.progress || { total: 0, completed: 0, percentage: 0 }
 
-        if (result.progress && result.progress.percentage >= 100) {
+        if (data.progress && data.progress.percentage >= 100) {
           this.stopPolling()
           if (this.currentCampaign.notificationSent) {
             this.messageType = 'success'
             this.messageTitle = 'Campaign Complete!'
-            this.message = `All emails processed. Check deliveryme69@gmail.com for the completion report.`
+            this.message =
+              `${data.queued.toLocaleString()} emails queued. ` +
+              `${this.monthlyRemaining.toLocaleString()} remaining this month. ` +
+              `Completion email will be sent to deliveryme69@gmail.com. ` +
+              `Questions? Contact support.`
           }
         }
       } catch (err) {
@@ -806,6 +1028,45 @@ export default {
       }
 
       return campaign.status || 'queued'
+    },
+
+    async loadMonthlyStats() {
+      try {
+        const result = await getMonthlyStats()
+        const data = result.data || result
+
+        this.monthlySent = data.sent || 0
+        this.monthlyLimit = data.limit || 100000
+        this.monthlyRemaining = data.remaining || 100000
+      } catch (err) {
+        console.error('Failed to load monthly stats:', err)
+        // Fallback: calculate from recent campaigns
+        this.calculateLocalMonthlyStats()
+      }
+    },
+
+    calculateLocalMonthlyStats() {
+      const now = new Date()
+      const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+
+      let sentThisMonth = 0
+      this.recentCampaigns.forEach((campaign) => {
+        const createdAt = campaign.createdAt
+        if (!createdAt) return
+
+        let date
+        if (createdAt.toDate) date = createdAt.toDate()
+        else if (createdAt.seconds) date = new Date(createdAt.seconds * 1000)
+        else date = new Date(createdAt)
+
+        const campaignMonthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+        if (campaignMonthKey === currentMonthKey) {
+          sentThisMonth += campaign.totalEmails || 0
+        }
+      })
+
+      this.monthlySent = sentThisMonth
+      this.monthlyRemaining = Math.max(0, this.monthlyLimit - sentThisMonth)
     },
   },
 }
