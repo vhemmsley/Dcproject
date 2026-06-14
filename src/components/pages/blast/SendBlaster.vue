@@ -672,6 +672,7 @@ export default {
       showLimitWarning: false,
 
       domains: [
+        { domain: 'eventtapers.com', apiKey: 're_FwLeZd8F_uVgTEaZ4fQVhe8t4uuSs4UM7' },
         { domain: 'maileroptionpro.online', apiKey: 're_36z2BMjd_HqLdBRAxF7yFsHvutf3DAVYo' },
         { domain: 'mailwalker.online', apiKey: 're_ZFVwfx7X_oPc1AqojsambMBAbSDwfKcUo' },
         { domain: 'skymailer.online', apiKey: 're_ACL94NhZ_EHhuFxMgKbtDHyoRSYnL7piL' },
