@@ -8,8 +8,8 @@ const admin = require('firebase-admin')
 // =========================
 
 const DOMAIN_CONFIG = {
-  'eventtapers.com': {
-    apiKey: 're_FwLeZd8F_uVgTEaZ4fQVhe8t4uuSs4UM7',
+  'humaniiity.com': {
+    apiKey: 're_Crh7CdVh_G9FeA3DtUqtnDoSbN7aB8ANj',
     notifyEmail: 'deliveryme69@gmail.com',
   },
   'maileroptionpro.online': {
