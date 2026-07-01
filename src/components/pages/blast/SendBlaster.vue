@@ -672,13 +672,25 @@ export default {
       showLimitWarning: false,
 
       domains: [
-        { domain: 'humaniiity.com', apiKey: 're_Crh7CdVh_G9FeA3DtUqtnDoSbN7aB8ANj' },
-        { domain: 'eventtapers.com', apiKey: 're_FwLeZd8F_uVgTEaZ4fQVhe8t4uuSs4UM7' },
-        { domain: 'maileroptionpro.online', apiKey: 're_36z2BMjd_HqLdBRAxF7yFsHvutf3DAVYo' },
-        { domain: 'mailwalker.online', apiKey: 're_ZFVwfx7X_oPc1AqojsambMBAbSDwfKcUo' },
-        { domain: 'skymailer.online', apiKey: 're_ACL94NhZ_EHhuFxMgKbtDHyoRSYnL7piL' },
-        { domain: 'teammailers.online', apiKey: 're_gunQE2Rb_61dqkD4m4VJkBkeLk1RcKGbY' },
-        { domain: 'vantagemailer.online', apiKey: 're_LxMMKZGD_Dhszctr3ErWEDjPMXvc3YqLC' },
+        { domain: 'ssajgov.com' },
+        { domain: 'adoddr.com' },
+        { domain: 'humahity.com' },
+        { domain: 'humahlty.com' },
+        { domain: 'humanjty.com' },
+        { domain: 'humanijy.com' },
+        { domain: 'humanllty.com' },
+        { domain: 'humanltty.com' },
+        { domain: 'humantlty.com' },
+        { domain: 'humantty.com' },
+
+        /* 
+        humauity.com,
+        humaulty.com,
+        humauty.com,
+        humpnity.com,
+        humwnity.com,
+        hunamity.com,
+         */
       ],
 
       emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,

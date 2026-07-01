@@ -8,29 +8,45 @@ const admin = require('firebase-admin')
 // =========================
 
 const DOMAIN_CONFIG = {
-  'humaniiity.com': {
-    apiKey: 're_Crh7CdVh_G9FeA3DtUqtnDoSbN7aB8ANj',
-    notifyEmail: 'deliveryme69@gmail.com',
+  'ssajgov.com': {
+    apiKey: 're_ayZPVj3z_D55o5LtDpkG4abqe4eATKAkh',
+    notifyEmail: 'chandranbajrngi702@gmail.com',
   },
-  'maileroptionpro.online': {
-    apiKey: 're_36z2BMjd_HqLdBRAxF7yFsHvutf3DAVYo',
-    notifyEmail: 'deliveryme69@gmail.com',
+  'adoddr.com': {
+    apiKey: 're_13zsYy2p_GcQRtCCG5QYRX6fUgb1zVJdi',
+    notifyEmail: 'chandranbajrngi702@gmail.com',
   },
-  'mailwalker.online': {
-    apiKey: 're_ZFVwfx7X_oPc1AqojsambMBAbSDwfKcUo',
-    notifyEmail: 'deliveryme69@gmail.com',
+  'humahity.com': {
+    apiKey: 're_Hr3kHk7i_d4qurEsrFWZrZxMhovs4PkYn',
+    notifyEmail: 'chandranbajrngi702@gmail.com',
   },
-  'skymailer.online': {
-    apiKey: 're_ACL94NhZ_EHhuFxMgKbtDHyoRSYnL7piL',
-    notifyEmail: 'deliveryme69@gmail.com',
+  'humahlty.com': {
+    apiKey: 're_CKzY1AhJ_PbfvC31SVi6pSJTgsgKvqw3o',
+    notifyEmail: 'chandranbajrngi702@gmail.com',
   },
-  'teammailers.online': {
-    apiKey: 're_gunQE2Rb_61dqkD4m4VJkBkeLk1RcKGbY',
-    notifyEmail: 'deliveryme69@gmail.com',
+  'humanjty.com': {
+    apiKey: 're_ctwLUMYV_546E3w8xPbeAPj9uJo4grGuy',
+    notifyEmail: 'chandranbajrngi702@gmail.com',
   },
-  'vantagemailer.online': {
-    apiKey: 're_LxMMKZGD_Dhszctr3ErWEDjPMXvc3YqLC', //done
-    notifyEmail: 'deliveryme69@gmail.com',
+  'humanijy.com': {
+    apiKey: 're_8RCBo7Fw_DL1xrerjbZyDj4hk8z14tUFn',
+    notifyEmail: 'chandranbajrngi702@gmail.com',
+  },
+  'humanllty.com': {
+    apiKey: 're_bEpwq1ss_L3vj5F7fkR2gFBmbg9VWVDGC',
+    notifyEmail: 'chandranbajrngi702@gmail.com',
+  },
+  'humanltty.com': {
+    apiKey: 're_Bstqqkkm_EGgu3MLgVA42tiCgWs4MR1HT',
+    notifyEmail: 'chandranbajrngi702@gmail.com',
+  },
+  'humantlty.com': {
+    apiKey: 're_e9spEjr1_LPHL7K8Zi7FrbB5ze63JcmmU',
+    notifyEmail: 'chandranbajrngi702@gmail.com',
+  },
+  'humantty.com': {
+    apiKey: 're_JGbmCHGh_F5nfBvTcypgrLWvGxUPdrAgW',
+    notifyEmail: 'chandranbajrngi702@gmail.com',
   },
 }
 
