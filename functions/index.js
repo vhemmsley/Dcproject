@@ -1125,3 +1125,166 @@ exports.getMonthlyStats = onCall(
     }
   },
 )
+
+// =========================
+// 10. GET CAMPAIGN EMAILS — Paginated fetch of all emails in a campaign
+// =========================
+exports.getCampaignEmails = onCall(
+  {
+    memory: '512MiB',
+    timeoutSeconds: 60,
+    maxInstances: 10,
+  },
+  async (request) => {
+    try {
+      const { campaignId, pageSize = 500, lastDocId } = request.data
+
+      if (!campaignId) {
+        throw new HttpsError('invalid-argument', 'Campaign ID is required')
+      }
+
+      let query = db
+        .collection('emailQueue')
+        .where('campaignId', '==', campaignId)
+        .orderBy('createdAt', 'desc')
+        .limit(Math.min(pageSize, 1000))
+
+      if (lastDocId) {
+        const lastDoc = await db.collection('emailQueue').doc(lastDocId).get()
+        if (lastDoc.exists) query = query.startAfter(lastDoc)
+      }
+
+      const snapshot = await query.get()
+
+      if (snapshot.empty) {
+        return { emails: [], totalFetched: 0, hasMore: false, lastDocId: null }
+      }
+
+      const emails = snapshot.docs.map((doc) => {
+        const data = doc.data()
+        return {
+          id: doc.id,
+          email: data.email,
+          status: data.status,
+          attempts: data.attempts || 0,
+          retryCount: data.retryCount || 0,
+          error: data.error || null,
+          createdAt: data.createdAt?.toDate?.() || null,
+          sentAt: data.sentAt?.toDate?.() || null,
+          lastAttempt: data.lastAttempt?.toDate?.() || null,
+          distributedAt: data.distributedAt?.toDate?.() || null,
+          workerQueue: data.workerQueue || null,
+        }
+      })
+
+      const lastDoc = snapshot.docs[snapshot.docs.length - 1]
+
+      // Check if more exist
+      const nextQuery = db
+        .collection('emailQueue')
+        .where('campaignId', '==', campaignId)
+        .orderBy('createdAt', 'desc')
+        .startAfter(lastDoc)
+        .limit(1)
+      const nextSnapshot = await nextQuery.get()
+
+      return {
+        emails,
+        totalFetched: emails.length,
+        hasMore: !nextSnapshot.empty,
+        lastDocId: lastDoc.id,
+      }
+    } catch (err) {
+      console.error('❌ getCampaignEmails error:', err)
+      throw new HttpsError('internal', err.message)
+    }
+  },
+)
+
+// =========================
+// 11. EXPORT CAMPAIGN EMAILS — Returns ALL emails as bulk data
+// =========================
+exports.exportCampaignEmails = onCall(
+  {
+    memory: '1GiB',
+    timeoutSeconds: 300,
+    maxInstances: 5,
+  },
+  async (request) => {
+    try {
+      const { campaignId } = request.data
+      if (!campaignId) throw new HttpsError('invalid-argument', 'Campaign ID required')
+
+      const allEmails = []
+      let lastDocId = null
+      let hasMore = true
+      const batchSize = 1000
+
+      while (hasMore && allEmails.length < 50000) {
+        let query = db
+          .collection('emailQueue')
+          .where('campaignId', '==', campaignId)
+          .orderBy('createdAt', 'desc')
+          .limit(batchSize)
+
+        if (lastDocId) {
+          const lastDoc = await db.collection('emailQueue').doc(lastDocId).get()
+          if (lastDoc.exists) query = query.startAfter(lastDoc)
+        }
+
+        const snapshot = await query.get()
+        if (snapshot.empty) {
+          hasMore = false
+          break
+        }
+
+        snapshot.docs.forEach((doc) => {
+          const data = doc.data()
+          allEmails.push({
+            email: data.email,
+            status: data.status,
+            attempts: data.attempts || 0,
+            retryCount: data.retryCount || 0,
+            error: data.error || '',
+            createdAt: data.createdAt?.toDate?.().toISOString() || '',
+            sentAt: data.sentAt?.toDate?.().toISOString() || '',
+            lastAttempt: data.lastAttempt?.toDate?.().toISOString() || '',
+            distributedAt: data.distributedAt?.toDate?.().toISOString() || '',
+            workerQueue: data.workerQueue || '',
+          })
+        })
+
+        lastDocId = snapshot.docs[snapshot.docs.length - 1].id
+
+        const checkQuery = db
+          .collection('emailQueue')
+          .where('campaignId', '==', campaignId)
+          .orderBy('createdAt', 'desc')
+          .startAfter(snapshot.docs[snapshot.docs.length - 1])
+          .limit(1)
+        const checkSnapshot = await checkQuery.get()
+        hasMore = !checkSnapshot.empty
+      }
+
+      const campaignDoc = await db.collection('campaigns').doc(campaignId).get()
+      const campaignInfo = campaignDoc.exists ? campaignDoc.data() : {}
+
+      return {
+        campaign: {
+          campaignId,
+          domain: campaignInfo.domain || '',
+          fromName: campaignInfo.fromName || '',
+          subject: campaignInfo.subject || '',
+          totalEmails: campaignInfo.totalEmails || allEmails.length,
+          status: campaignInfo.status || '',
+          createdAt: campaignInfo.createdAt?.toDate?.().toISOString() || '',
+        },
+        emails: allEmails,
+        total: allEmails.length,
+      }
+    } catch (err) {
+      console.error('❌ exportCampaignEmails error:', err)
+      throw new HttpsError('internal', err.message)
+    }
+  },
+)

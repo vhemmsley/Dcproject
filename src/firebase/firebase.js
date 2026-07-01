@@ -26,3 +26,5 @@ export const getCampaignStatus = httpsCallable(functions, 'getCampaignStatus')
 export const getCampaigns = httpsCallable(functions, 'getCampaigns')
 
 export const getMonthlyStats = httpsCallable(functions, 'getMonthlyStats')
+export const getCampaignEmails = httpsCallable(functions, 'getCampaignEmails')
+export const exportCampaignEmails = httpsCallable(functions, 'exportCampaignEmails')
