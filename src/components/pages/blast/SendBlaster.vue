@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
-    <div class="container mx-auto px-4 pt-10 pb-5">
+    <div class="container mx-auto px-4 pt-5 pb-5">
       <!-- Header -->
       <div class="max-w-5xl mx-auto text-center mb-10">
         <h1
@@ -51,14 +51,14 @@
       </div>
 
       <!-- Monthly Limit Counter -->
-      <div class="max-w-5xl mx-auto mb-2">
+      <div class="max-w-5xl mx-auto mb-6">
         <div
-          class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 shadow-xl"
+          class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-2xl p-4 shadow-xl"
         >
-          <div class="flex items-center justify-between mb-1">
+          <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
               <svg
-                class="w-3 h-3 text-blue-400"
+                class="w-4 h-4 text-blue-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -89,9 +89,9 @@
                 remaining
               </span>
             </div>
-            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+            <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
               <div
-                class="h-3 rounded-full transition-all duration-500"
+                class="h-full rounded-full transition-all duration-500"
                 :class="monthlyProgressBarColor"
                 :style="{ width: monthlyProgressPercentage + '%' }"
               ></div>
@@ -111,7 +111,7 @@
             class="mt-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2"
           >
             <svg
-              class="w-3 h-3 text-red-400 shrink-0"
+              class="w-5 h-5 text-red-400 shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -151,7 +151,8 @@
               />
             </svg>
             After this batch:
-            {{ (monthlyRemaining - validEmails.length).toLocaleString() }} remaining this month
+            {{ Math.max(0, monthlyRemaining - validEmails.length).toLocaleString() }} remaining this
+            month
           </div>
         </div>
       </div>
@@ -196,17 +197,19 @@
               <label class="block text-sm font-medium text-slate-300 mb-2">
                 From Name <span class="text-red-400">*</span>
               </label>
+              <!-- CHANGED: Added min-w-0 to flex container to prevent overflow -->
               <div
-                class="flex bg-slate-950 border border-slate-700 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 transition-all"
+                class="flex min-w-0 bg-slate-950 border border-slate-700 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 transition-all"
               >
                 <input
                   v-model="fromName"
                   type="text"
                   placeholder="e.g. Team"
-                  class="flex-1 bg-transparent px-4 py-3 outline-none"
+                  class="flex-1 min-w-0 bg-transparent px-4 py-3 outline-none"
                 />
+                <!-- CHANGED: Added text-xs on mobile, sm:text-sm on larger screens, truncate to prevent overflow -->
                 <span
-                  class="flex items-center px-4 text-slate-500 text-sm border-l border-slate-700"
+                  class="flex items-center px-4 text-slate-500 text-xs sm:text-sm border-l border-slate-700 truncate max-w-[50%] sm:max-w-none"
                 >
                   @{{ selectedDomain || 'domain.com' }}
                 </span>
@@ -236,7 +239,7 @@
               </label>
               <textarea
                 v-model="html"
-                rows="10"
+                rows="13"
                 placeholder="Paste your email HTML here..."
                 class="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 outline-none resize-none focus:ring-2 focus:ring-blue-500 font-mono text-sm transition-all"
               />
@@ -254,7 +257,7 @@
               </div>
               <textarea
                 v-model="emailInput"
-                rows="12"
+                rows="10"
                 placeholder="Paste emails here...
 
 john@gmail.com
@@ -440,7 +443,7 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
         <!-- Sidebar: Campaign Monitor -->
         <div class="lg:col-span-1">
           <div
-            class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 shadow-2xl sticky top-6"
+            class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 shadow-2xl lg:sticky lg:top-6"
           >
             <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
               <svg
@@ -470,8 +473,66 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
                     {{ displayCampaignStatus }}
                   </span>
                 </div>
+
+                <!-- CHANGED: Added Campaign ID with copy button -->
+                <div class="flex items-center gap-2 mb-2">
+                  <p
+                    class="text-xs font-mono bg-slate-800/50 px-2 py-1 rounded text-slate-400 truncate flex-1"
+                    :title="currentCampaign.campaignId || currentCampaignId"
+                  >
+                    ID: {{ currentCampaign.campaignId || currentCampaignId }}
+                  </p>
+                  <button
+                    @click="copyCampaignId"
+                    class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors shrink-0"
+                    :title="copySuccess ? 'Copied!' : 'Copy Campaign ID'"
+                  >
+                    <svg
+                      v-if="!copySuccess"
+                      class="w-3.5 h-3.5 text-slate-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <svg
+                      v-else
+                      class="w-3.5 h-3.5 text-green-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
                 <p class="font-semibold text-sm truncate">{{ currentCampaign.subject }}</p>
                 <p class="text-xs text-slate-500 mt-1">{{ currentCampaign.domain }}</p>
+
+                <!-- CHANGED: Added created date/time display -->
+                <p class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  {{ formatDate(currentCampaign.createdAt) }}
+                </p>
 
                 <!-- Progress Bar -->
                 <div class="mt-3">
@@ -481,9 +542,9 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
                       >{{ campaignProgress.percentage }}%</span
                     >
                   </div>
-                  <div class="w-full bg-slate-800 rounded-full h-2">
+                  <div class="w-full bg-slate-800 rounded-full h-2.5">
                     <div
-                      class="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full transition-all duration-500"
+                      class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full rounded-full transition-all duration-500"
                       :style="{ width: campaignProgress.percentage + '%' }"
                     ></div>
                   </div>
@@ -578,6 +639,7 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
                   <div class="flex justify-between items-start">
                     <div class="flex-1 min-w-0">
                       <p class="text-sm font-medium truncate">{{ campaign.subject }}</p>
+                      <!-- CHANGED: Fixed date display to use formatDate properly -->
                       <p class="text-xs text-slate-500">
                         {{ campaign.domain }} • {{ formatDate(campaign.createdAt) }}
                       </p>
@@ -602,7 +664,7 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
 
       <!-- Contact Footer -->
       <div class="max-w-5xl mx-auto mt-8">
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-3 text-center">
+        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
           <div class="flex items-center justify-center gap-2 mb-2">
             <svg
               class="w-5 h-5 text-blue-400"
@@ -665,12 +727,15 @@ export default {
 
       pollInterval: null,
 
-      // Monthly limit tracking
-      monthlyLimit: 100000,
-      monthlySent: 0,
-      monthlyRemaining: 100000,
-      showLimitWarning: false,
+      // CHANGED: Added copySuccess for clipboard feedback
+      copySuccess: false,
 
+      // Monthly limit tracking — synced with backend
+      monthlyLimit: 50000,
+      monthlySent: 0,
+      monthlyRemaining: 50000,
+
+      // Domain list — NO API keys exposed (backend handles auth)
       domains: [
         { domain: 'ssajgov.com' },
         { domain: 'adoddr.com' },
@@ -698,10 +763,6 @@ export default {
   },
 
   computed: {
-    selectedDomainObj() {
-      return this.domains.find((d) => d.domain === this.selectedDomain)
-    },
-
     computedFromEmail() {
       if (!this.fromName || !this.selectedDomain) return ''
       const clean = this.fromName.trim().toLowerCase().replace(/\s+/g, '')
@@ -739,7 +800,8 @@ export default {
         !this.selectedDomain ||
         !this.fromName.trim() ||
         !this.subject.trim() ||
-        !this.html.trim()
+        !this.html.trim() ||
+        this.monthlyRemaining <= 0
       )
     },
 
@@ -794,9 +856,6 @@ export default {
       if (completed >= total) return 'Complete!'
 
       // Only these statuses represent work still to be done
-      // distributed: in worker queues, being processed now
-      // pending: in main queue, waiting for distributor
-      // retry: will be re-queued soon
       const totalRemaining = pending + distributed + retry
 
       if (totalRemaining <= 0) return 'Finalizing...'
@@ -816,7 +875,9 @@ export default {
       if (mins === 0) return `${hours}h`
       return `${hours}h ${mins}m`
     },
-    onthlyProgressPercentage() {
+
+    monthlyProgressPercentage() {
+      if (!this.monthlyLimit || this.monthlyLimit <= 0) return 0
       return Math.min(100, Math.round((this.monthlySent / this.monthlyLimit) * 100))
     },
 
@@ -837,17 +898,19 @@ export default {
     },
 
     wouldExceedLimit() {
+      if (!this.monthlyLimit) return false
       return this.monthlySent + this.validEmails.length > this.monthlyLimit
     },
 
     emailsThatCanBeSent() {
-      return Math.min(this.validEmails.length, this.monthlyLimit - this.monthlySent)
+      if (!this.monthlyLimit) return this.validEmails.length
+      return Math.max(0, Math.min(this.validEmails.length, this.monthlyLimit - this.monthlySent))
     },
   },
 
   mounted() {
     this.loadRecentCampaigns()
-    this.loadMonthlyStats() // ← stats checker
+    this.loadMonthlyStats()
   },
 
   beforeUnmount() {
@@ -865,15 +928,49 @@ export default {
         .join(' ')
     },
 
+    // CHANGED: Added copyCampaignId method
+    async copyCampaignId() {
+      const id = this.currentCampaign?.campaignId || this.currentCampaignId
+      if (!id) return
+
+      try {
+        await navigator.clipboard.writeText(id)
+        this.copySuccess = true
+        setTimeout(() => {
+          this.copySuccess = false
+        }, 2000)
+      } catch (err) {
+        console.error('Failed to copy campaign ID:', err)
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea')
+        textArea.value = id
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+        this.copySuccess = true
+        setTimeout(() => {
+          this.copySuccess = false
+        }, 2000)
+      }
+    },
+
     async submitEmails() {
       this.loading = true
       this.message = ''
 
       try {
+        // Check monthly limit before sending
+        if (this.wouldExceedLimit) {
+          throw new Error(
+            `Monthly limit exceeded. You can only send ${this.emailsThatCanBeSent} more emails this month.`,
+          )
+        }
+
         const payload = {
           emails: this.validEmails,
-          subject: this.toSentenceCase(this.subject),
-          html: this.html,
+          subject: this.subject.trim(),
+          html: this.html.trim(),
           fromName: this.formattedFromName,
           fromEmail: this.computedFromEmail,
           domain: this.selectedDomain,
@@ -885,7 +982,7 @@ export default {
 
         console.log('✅ Campaign queued:', result)
 
-        // Firebase callable functions wrap response in result.data
+        // Firebase callable Functions wrap response in result.data
         const data = result.data || result
         this.currentCampaignId = data.campaignId
         this.messageType = 'success'
@@ -895,6 +992,7 @@ export default {
         // Start polling immediately with the new campaign ID
         this.startPolling(this.currentCampaignId)
         await this.loadRecentCampaigns()
+        await this.loadMonthlyStats() // Refresh monthly stats
       } catch (error) {
         console.error('❌ Error:', error)
         this.messageType = 'error'
@@ -914,7 +1012,6 @@ export default {
       this.stopPolling()
       this.pollCampaignStatus(campaignId)
       this.pollInterval = setInterval(() => {
-        // Always use the latest currentCampaignId from instance
         if (this.currentCampaignId) {
           this.pollCampaignStatus(this.currentCampaignId)
         }
@@ -938,7 +1035,7 @@ export default {
         const result = await getCampaignStatus({ campaignId })
         console.log('Poll result:', result)
 
-        // Firebase callable functions wrap response in result.data
+        // Firebase callable Functions wrap response in result.data
         const data = result.data || result
 
         if (!data || !data.campaign) {
@@ -956,11 +1053,12 @@ export default {
             this.messageType = 'success'
             this.messageTitle = 'Campaign Complete!'
             this.message =
-              `${data.queued.toLocaleString()} emails queued. ` +
+              `${this.currentCampaign.totalEmails?.toLocaleString() || 'All'} emails processed. ` +
               `${this.monthlyRemaining.toLocaleString()} remaining this month. ` +
-              `Completion email will be sent to deliveryme69@gmail.com. ` +
+              `Completion email sent to deliveryme69@gmail.com. ` +
               `Questions? Contact support.`
           }
+          await this.loadMonthlyStats() // Refresh stats on completion
         }
       } catch (err) {
         console.error('Poll error:', err)
@@ -987,21 +1085,38 @@ export default {
       this.startPolling(this.currentCampaignId)
     },
 
+    // CHANGED: Improved formatDate to better handle all Firestore timestamp formats
     formatDate(timestamp) {
       if (!timestamp) return 'Unknown'
+
       try {
         let date
-        // Firestore Timestamp object
+
+        // Firestore Timestamp object with toDate()
         if (timestamp.toDate && typeof timestamp.toDate === 'function') {
           date = timestamp.toDate()
         }
-        // Firestore Timestamp with seconds/nanoseconds
-        else if (timestamp.seconds) {
-          date = new Date(timestamp.seconds * 1000)
+        // Firestore Timestamp with _seconds and _nanoseconds (newer SDK format)
+        else if (timestamp._seconds !== undefined) {
+          date = new Date(timestamp._seconds * 1000 + (timestamp._nanoseconds || 0) / 1000000)
         }
-        // ISO string or number
-        else {
+        // Firestore Timestamp with seconds/nanoseconds (older SDK format)
+        else if (timestamp.seconds !== undefined) {
+          date = new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds || 0) / 1000000)
+        }
+        // ISO string
+        else if (typeof timestamp === 'string') {
           date = new Date(timestamp)
+        }
+        // Number (milliseconds)
+        else if (typeof timestamp === 'number') {
+          date = new Date(timestamp)
+        }
+        // Already a Date object
+        else if (timestamp instanceof Date) {
+          date = timestamp
+        } else {
+          return 'Unknown'
         }
 
         if (isNaN(date.getTime())) return 'Unknown'
@@ -1009,10 +1124,13 @@ export default {
         return date.toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
+          year: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
+          hour12: true,
         })
       } catch (e) {
+        console.error('formatDate error:', e, 'timestamp:', timestamp)
         return 'Unknown'
       }
     },
@@ -1048,8 +1166,8 @@ export default {
         const data = result.data || result
 
         this.monthlySent = data.sent || 0
-        this.monthlyLimit = data.limit || 100000
-        this.monthlyRemaining = data.remaining || 100000
+        this.monthlyLimit = data.limit || 50000
+        this.monthlyRemaining = data.remaining || 50000
       } catch (err) {
         console.error('Failed to load monthly stats:', err)
         // Fallback: calculate from recent campaigns
@@ -1073,7 +1191,8 @@ export default {
 
         const campaignMonthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
         if (campaignMonthKey === currentMonthKey) {
-          sentThisMonth += campaign.totalEmails || 0
+          // FIXED: Count only successfully sent emails, not total queued
+          sentThisMonth += campaign.stats?.sent || campaign.totalEmails || 0
         }
       })
 

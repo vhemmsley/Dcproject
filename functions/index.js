@@ -1131,7 +1131,7 @@ exports.getMonthlyStats = onCall(
 // =========================
 exports.getCampaignEmails = onCall(
   {
-    memory: '512MiB',
+    memory: '256MiB',
     timeoutSeconds: 60,
     maxInstances: 10,
   },
@@ -1206,7 +1206,7 @@ exports.getCampaignEmails = onCall(
 // =========================
 exports.exportCampaignEmails = onCall(
   {
-    memory: '1GiB',
+    memory: '256MiB',
     timeoutSeconds: 300,
     maxInstances: 5,
   },
