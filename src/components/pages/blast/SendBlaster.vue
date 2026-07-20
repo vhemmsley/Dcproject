@@ -1,18 +1,18 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
-    <div class="container mx-auto px-4 pt-5 pb-5">
+    <div class="container mx-auto px-3 sm:px-4 pt-4 sm:pt-5 pb-5">
       <!-- Header -->
-      <div class="max-w-5xl mx-auto text-center mb-10">
+      <div class="max-w-5xl mx-auto text-center mb-6 sm:mb-10">
         <h1
-          class="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent"
+          class="text-3xl sm:text-5xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent"
         >
           Send Blaster Enterprise
         </h1>
-        <p class="text-slate-400 text-lg">
+        <p class="text-slate-400 text-sm sm:text-lg px-2">
           Enterprise-grade email delivery with 3 parallel workers, automatic retries, and real-time
           analytics.
         </p>
-        <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mt-4 text-xs sm:text-sm">
+        <div class="flex flex-wrap justify-center gap-2 mt-3 sm:mt-4 text-xs sm:text-sm">
           <span
             class="px-2 sm:px-3 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30"
           >
@@ -51,9 +51,9 @@
       </div>
 
       <!-- Monthly Limit Counter -->
-      <div class="max-w-5xl mx-auto mb-6">
+      <div class="max-w-5xl mx-auto mb-4 sm:mb-6">
         <div
-          class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-2xl p-4 shadow-xl"
+          class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 sm:p-4 shadow-xl"
         >
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
@@ -70,14 +70,14 @@
                   d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                 />
               </svg>
-              <h3 class="text-sm font-semibold text-slate-300">Monthly Sending Limit</h3>
+              <h3 class="text-xs sm:text-sm font-semibold text-slate-300">Monthly Sending Limit</h3>
             </div>
             <span class="text-xs text-slate-500">Resets 1st of each month</span>
           </div>
 
           <!-- Progress Bar -->
           <div class="relative">
-            <div class="flex justify-between text-sm mb-1">
+            <div class="flex justify-between text-xs sm:text-sm mb-1">
               <span class="text-slate-400">
                 <span class="font-bold" :class="monthlyProgressColor">{{
                   monthlySent.toLocaleString()
@@ -89,7 +89,7 @@
                 remaining
               </span>
             </div>
-            <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
               <div
                 class="h-full rounded-full transition-all duration-500"
                 :class="monthlyProgressBarColor"
@@ -108,10 +108,10 @@
           <!-- Warning: Would exceed limit -->
           <div
             v-if="wouldExceedLimit && validEmails.length > 0"
-            class="mt-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2"
+            class="mt-3 p-2 sm:p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-2"
           >
             <svg
-              class="w-5 h-5 text-red-400 shrink-0"
+              class="w-5 h-5 text-red-400 shrink-0 mt-0.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -123,7 +123,7 @@
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
             </svg>
-            <div class="text-sm">
+            <div class="text-xs sm:text-sm">
               <span class="text-red-400 font-semibold">Limit Warning:</span>
               <span class="text-red-300">
                 This batch ({{ validEmails.length.toLocaleString() }}) exceeds your monthly limit.
@@ -138,7 +138,7 @@
             class="mt-3 p-2 bg-blue-500/10 border border-blue-500/20 rounded-lg text-xs text-blue-300 flex items-center gap-2"
           >
             <svg
-              class="w-4 h-4 text-blue-400"
+              class="w-4 h-4 text-blue-400 shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -157,33 +157,99 @@
         </div>
       </div>
 
-      <div class="max-w-5xl mx-auto grid lg:grid-cols-3 gap-6">
+      <!-- Recovery Status Banner -->
+      <div v-if="recoveryStatus.show" class="max-w-5xl mx-auto mb-4">
+        <div
+          class="rounded-xl p-3 flex items-start gap-3"
+          :class="
+            recoveryStatus.type === 'warning'
+              ? 'bg-orange-500/10 border border-orange-500/30'
+              : 'bg-blue-500/10 border border-blue-500/30'
+          "
+        >
+          <svg
+            class="w-5 h-5 shrink-0 mt-0.5"
+            :class="recoveryStatus.type === 'warning' ? 'text-orange-400' : 'text-blue-400'"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <div class="flex-1 min-w-0">
+            <p
+              class="text-xs sm:text-sm font-semibold"
+              :class="recoveryStatus.type === 'warning' ? 'text-orange-400' : 'text-blue-400'"
+            >
+              {{ recoveryStatus.title }}
+            </p>
+            <p class="text-xs text-slate-400 mt-0.5">{{ recoveryStatus.message }}</p>
+          </div>
+          <button
+            @click="runRecovery"
+            :disabled="recoveryLoading"
+            class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
+            :class="
+              recoveryLoading
+                ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                : 'bg-orange-600 hover:bg-orange-500 text-white'
+            "
+          >
+            <span v-if="!recoveryLoading">Run Recovery</span>
+            <span v-else class="flex items-center gap-1">
+              <svg class="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24">
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                />
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Running...
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="max-w-5xl mx-auto grid lg:grid-cols-3 gap-4 sm:gap-6">
         <!-- Main Form -->
         <div class="lg:col-span-2">
           <div
-            class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl"
+            class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl"
           >
             <!-- Campaign Name -->
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-slate-300 mb-2">
+            <div class="mb-4 sm:mb-6">
+              <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-2">
                 Campaign Name <span class="text-slate-500">(Optional)</span>
               </label>
               <input
                 v-model="campaignName"
                 type="text"
                 placeholder="e.g. March Newsletter"
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
               />
             </div>
 
             <!-- Domain Select -->
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-slate-300 mb-2">
+            <div class="mb-4 sm:mb-6">
+              <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-2">
                 Select Domain <span class="text-red-400">*</span>
               </label>
               <select
                 v-model="selectedDomain"
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
               >
                 <option disabled value="">Choose domain</option>
                 <option v-for="d in domains" :key="d.domain" :value="d.domain">
@@ -193,11 +259,10 @@
             </div>
 
             <!-- From Name -->
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-slate-300 mb-2">
+            <div class="mb-4 sm:mb-6">
+              <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-2">
                 From Name <span class="text-red-400">*</span>
               </label>
-              <!-- CHANGED: Added min-w-0 to flex container to prevent overflow -->
               <div
                 class="flex min-w-0 bg-slate-950 border border-slate-700 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 transition-all"
               >
@@ -205,59 +270,58 @@
                   v-model="fromName"
                   type="text"
                   placeholder="e.g. Team"
-                  class="flex-1 min-w-0 bg-transparent px-4 py-3 outline-none"
+                  class="flex-1 min-w-0 bg-transparent px-3 sm:px-4 py-2.5 sm:py-3 outline-none text-sm"
                 />
-                <!-- CHANGED: Added text-xs on mobile, sm:text-sm on larger screens, truncate to prevent overflow -->
                 <span
-                  class="flex items-center px-4 text-slate-500 text-xs sm:text-sm border-l border-slate-700 truncate max-w-[50%] sm:max-w-none"
+                  class="flex items-center px-2 sm:px-4 text-slate-500 text-xs sm:text-sm border-l border-slate-700 truncate max-w-[45%] sm:max-w-[40%]"
                 >
                   @{{ selectedDomain || 'domain.com' }}
                 </span>
               </div>
-              <p class="text-xs text-slate-500 mt-1">
+              <p class="text-xs text-slate-500 mt-1 truncate">
                 Full sender: {{ formattedFromName }} &lt;{{ computedFromEmail }}&gt;
               </p>
             </div>
 
             <!-- Subject -->
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-slate-300 mb-2">
+            <div class="mb-4 sm:mb-6">
+              <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-2">
                 Email Subject <span class="text-red-400">*</span>
               </label>
               <input
                 v-model="subject"
                 type="text"
                 placeholder="Enter email subject..."
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
               />
             </div>
 
             <!-- HTML Content -->
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-slate-300 mb-2">
+            <div class="mb-4 sm:mb-6">
+              <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-2">
                 Email HTML Content <span class="text-red-400">*</span>
               </label>
               <textarea
                 v-model="html"
-                rows="13"
+                rows="10"
                 placeholder="Paste your email HTML here..."
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 outline-none resize-none focus:ring-2 focus:ring-blue-500 font-mono text-sm transition-all"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 sm:p-4 outline-none resize-none focus:ring-2 focus:ring-blue-500 font-mono text-xs sm:text-sm transition-all"
               />
             </div>
 
             <!-- Emails -->
             <div class="mb-4">
               <div class="flex justify-between items-center mb-2">
-                <label class="text-sm font-medium text-slate-300">
+                <label class="text-xs sm:text-sm font-medium text-slate-300">
                   Email Addresses <span class="text-red-400">*</span>
                 </label>
-                <span class="text-sm text-blue-400 font-semibold">
-                  {{ validEmails.length }} Valid Emails
+                <span class="text-xs sm:text-sm text-blue-400 font-semibold">
+                  {{ validEmails.length }} Valid
                 </span>
               </div>
               <textarea
                 v-model="emailInput"
-                rows="10"
+                rows="8"
                 placeholder="Paste emails here...
 
 john@gmail.com
@@ -267,14 +331,14 @@ mike@hotmail.com
 or
 
 john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 outline-none resize-none focus:ring-2 focus:ring-blue-500 transition-all"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 sm:p-4 outline-none resize-none focus:ring-2 focus:ring-blue-500 transition-all text-xs sm:text-sm"
               />
             </div>
 
             <!-- Validation Summary -->
-            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 mb-6">
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
               <div class="flex items-center justify-between mb-3">
-                <span class="font-semibold flex items-center gap-2">
+                <span class="font-semibold flex items-center gap-2 text-sm">
                   <svg
                     class="w-5 h-5 text-blue-400"
                     fill="none"
@@ -290,13 +354,15 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
                   </svg>
                   Validation Summary
                 </span>
-                <span class="text-sm px-3 py-1 rounded-full bg-blue-500/20 text-blue-400">
+                <span
+                  class="text-xs sm:text-sm px-3 py-1 rounded-full bg-blue-500/20 text-blue-400"
+                >
                   {{ validEmails.length }} Valid
                 </span>
               </div>
 
               <div v-if="invalidEmails.length" class="mb-3">
-                <h3 class="text-red-400 text-sm mb-2 flex items-center gap-1">
+                <h3 class="text-red-400 text-xs sm:text-sm mb-2 flex items-center gap-1">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       stroke-linecap="round"
@@ -307,18 +373,18 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
                   </svg>
                   Invalid Emails ({{ invalidEmails.length }})
                 </h3>
-                <div class="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                <div class="flex flex-wrap gap-1.5 sm:gap-2 max-h-32 overflow-y-auto">
                   <span
                     v-for="email in invalidEmails"
                     :key="email"
-                    class="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs border border-red-500/30"
+                    class="bg-red-500/20 text-red-400 px-2 sm:px-3 py-1 rounded-full text-xs border border-red-500/30"
                   >
                     {{ email }}
                   </span>
                 </div>
               </div>
 
-              <div v-else class="text-green-400 text-sm flex items-center gap-1">
+              <div v-else class="text-green-400 text-xs sm:text-sm flex items-center gap-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
@@ -332,18 +398,22 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
             </div>
 
             <!-- Stats Grid -->
-            <div class="grid grid-cols-3 gap-4 mb-8">
-              <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-center">
+            <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
+              <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 sm:p-4 text-center">
                 <p class="text-slate-400 text-xs uppercase tracking-wider">Total</p>
-                <h2 class="text-2xl font-bold mt-1">{{ totalEmails }}</h2>
+                <h2 class="text-xl sm:text-2xl font-bold mt-1">{{ totalEmails }}</h2>
               </div>
-              <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-center">
+              <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 sm:p-4 text-center">
                 <p class="text-green-400 text-xs uppercase tracking-wider">Valid</p>
-                <h2 class="text-2xl font-bold text-green-400 mt-1">{{ validEmails.length }}</h2>
+                <h2 class="text-xl sm:text-2xl font-bold text-green-400 mt-1">
+                  {{ validEmails.length }}
+                </h2>
               </div>
-              <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-center">
+              <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 sm:p-4 text-center">
                 <p class="text-red-400 text-xs uppercase tracking-wider">Invalid</p>
-                <h2 class="text-2xl font-bold text-red-400 mt-1">{{ invalidEmails.length }}</h2>
+                <h2 class="text-xl sm:text-2xl font-bold text-red-400 mt-1">
+                  {{ invalidEmails.length }}
+                </h2>
               </div>
             </div>
 
@@ -351,7 +421,7 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
             <button
               @click="submitEmails"
               :disabled="isSubmitDisabled"
-              class="w-full py-4 rounded-xl font-semibold text-lg transition-all duration-300 relative overflow-hidden group"
+              class="w-full py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 relative overflow-hidden group"
               :class="submitButtonClass"
             >
               <span v-if="!loading" class="relative z-10 flex items-center justify-center gap-2">
@@ -395,11 +465,11 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
             </button>
 
             <!-- Success/Error Messages -->
-            <div v-if="message" class="mt-4 p-4 rounded-xl" :class="messageClass">
+            <div v-if="message" class="mt-4 p-3 sm:p-4 rounded-xl" :class="messageClass">
               <div class="flex items-start gap-3">
                 <svg
                   v-if="messageType === 'success'"
-                  class="w-5 h-5 text-green-400 mt-0.5"
+                  class="w-5 h-5 text-green-400 mt-0.5 shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -413,7 +483,7 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
                 </svg>
                 <svg
                   v-else
-                  class="w-5 h-5 text-red-400 mt-0.5"
+                  class="w-5 h-5 text-red-400 mt-0.5 shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -425,12 +495,12 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
                     d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <div>
-                  <p class="font-semibold">{{ messageTitle }}</p>
-                  <p class="text-sm opacity-90 mt-1">{{ message }}</p>
+                <div class="min-w-0">
+                  <p class="font-semibold text-sm">{{ messageTitle }}</p>
+                  <p class="text-xs sm:text-sm opacity-90 mt-1">{{ message }}</p>
                   <p
                     v-if="currentCampaignId"
-                    class="text-xs mt-2 font-mono bg-black/20 px-2 py-1 rounded"
+                    class="text-xs mt-2 font-mono bg-black/20 px-2 py-1 rounded inline-block"
                   >
                     Campaign ID: {{ currentCampaignId }}
                   </p>
@@ -443,9 +513,9 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
         <!-- Sidebar: Campaign Monitor -->
         <div class="lg:col-span-1">
           <div
-            class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 shadow-2xl lg:sticky lg:top-6"
+            class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl lg:sticky lg:top-6"
           >
-            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <h2 class="text-lg sm:text-xl font-bold mb-4 flex items-center gap-2">
               <svg
                 class="w-5 h-5 text-blue-400"
                 fill="none"
@@ -464,20 +534,22 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
 
             <!-- Current Campaign -->
             <div v-if="currentCampaign" class="mb-6">
-              <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+              <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 sm:p-4">
                 <div class="flex justify-between items-start mb-2">
                   <span class="text-xs text-slate-400 uppercase tracking-wider"
                     >Current Campaign</span
                   >
-                  <span class="text-xs px-2 py-0.5 rounded-full" :class="campaignStatusClass">
+                  <span
+                    class="text-xs px-2 py-0.5 rounded-full shrink-0"
+                    :class="campaignStatusClass"
+                  >
                     {{ displayCampaignStatus }}
                   </span>
                 </div>
 
-                <!-- CHANGED: Added Campaign ID with copy button -->
                 <div class="flex items-center gap-2 mb-2">
                   <p
-                    class="text-xs font-mono bg-slate-800/50 px-2 py-1 rounded text-slate-400 truncate flex-1"
+                    class="text-xs font-mono bg-slate-800/50 px-2 py-1 rounded text-slate-400 truncate flex-1 min-w-0"
                     :title="currentCampaign.campaignId || currentCampaignId"
                   >
                     ID: {{ currentCampaign.campaignId || currentCampaignId }}
@@ -521,7 +593,6 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
                 <p class="font-semibold text-sm truncate">{{ currentCampaign.subject }}</p>
                 <p class="text-xs text-slate-500 mt-1">{{ currentCampaign.domain }}</p>
 
-                <!-- CHANGED: Added created date/time display -->
                 <p class="text-xs text-slate-500 mt-1 flex items-center gap-1">
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -542,7 +613,7 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
                       >{{ campaignProgress.percentage }}%</span
                     >
                   </div>
-                  <div class="w-full bg-slate-800 rounded-full h-2.5">
+                  <div class="w-full bg-slate-800 rounded-full h-2">
                     <div
                       class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full rounded-full transition-all duration-500"
                       :style="{ width: campaignProgress.percentage + '%' }"
@@ -608,9 +679,9 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
               </div>
             </div>
 
-            <div v-else class="text-center py-8 text-slate-500">
+            <div v-else class="text-center py-6 sm:py-8 text-slate-500">
               <svg
-                class="w-12 h-12 mx-auto mb-3 opacity-50"
+                class="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 opacity-50"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -628,7 +699,7 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
 
             <!-- Recent Campaigns -->
             <div v-if="recentCampaigns.length > 0">
-              <h3 class="text-sm font-semibold text-slate-400 mb-3">Recent Campaigns</h3>
+              <h3 class="text-xs sm:text-sm font-semibold text-slate-400 mb-3">Recent Campaigns</h3>
               <div class="space-y-2 max-h-64 overflow-y-auto">
                 <div
                   v-for="campaign in recentCampaigns"
@@ -636,16 +707,15 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
                   class="bg-slate-950 border border-slate-800 rounded-lg p-3 cursor-pointer hover:border-slate-600 transition-colors"
                   @click="loadCampaign(campaign.id)"
                 >
-                  <div class="flex justify-between items-start">
+                  <div class="flex justify-between items-start gap-2">
                     <div class="flex-1 min-w-0">
                       <p class="text-sm font-medium truncate">{{ campaign.subject }}</p>
-                      <!-- CHANGED: Fixed date display to use formatDate properly -->
                       <p class="text-xs text-slate-500">
                         {{ campaign.domain }} • {{ formatDate(campaign.createdAt) }}
                       </p>
                     </div>
                     <span
-                      class="text-xs px-2 py-0.5 rounded-full ml-2 shrink-0"
+                      class="text-xs px-2 py-0.5 rounded-full shrink-0"
                       :class="getCampaignStatusClass(getCampaignDisplayStatus(campaign))"
                     >
                       {{ getCampaignDisplayStatus(campaign) }}
@@ -663,11 +733,11 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
       </div>
 
       <!-- Contact Footer -->
-      <div class="max-w-5xl mx-auto mt-8">
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+      <div class="max-w-5xl mx-auto mt-6 sm:mt-8">
+        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-3 sm:p-4 text-center">
           <div class="flex items-center justify-center gap-2 mb-2">
             <svg
-              class="w-5 h-5 text-blue-400"
+              class="w-4 h-4 sm:w-5 sm:h-5 text-blue-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -679,9 +749,9 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
               />
             </svg>
-            <span class="text-sm font-semibold text-slate-300">Need Help?</span>
+            <span class="text-xs sm:text-sm font-semibold text-slate-300">Need Help?</span>
           </div>
-          <p class="text-sm text-slate-400">
+          <p class="text-xs sm:text-sm text-slate-400">
             Support:
             <a
               href="mailto:deliveryme69@gmail.com"
@@ -700,7 +770,13 @@ john@gmail.com, sarah@yahoo.com, mike@hotmail.com"
 </template>
 
 <script>
-import { sendBlaster, getCampaignStatus, getCampaigns, getMonthlyStats } from '@/firebase/firebase'
+import {
+  sendBlaster,
+  getCampaignStatus,
+  getCampaigns,
+  getMonthlyStats,
+  triggerRecovery,
+} from '@/firebase/firebase'
 
 export default {
   name: 'SendBlasterEnterprise',
@@ -726,14 +802,23 @@ export default {
       recentCampaigns: [],
 
       pollInterval: null,
+      recoveryCheckInterval: null,
 
-      // CHANGED: Added copySuccess for clipboard feedback
       copySuccess: false,
 
-      // Monthly limit tracking — synced with backend
-      monthlyLimit: 1000,
+      // Recovery status
+      recoveryStatus: {
+        show: false,
+        type: 'info', // 'info' or 'warning'
+        title: '',
+        message: '',
+      },
+      recoveryLoading: false,
+
+      // Monthly limit tracking
+      monthlyLimit: 50000,
       monthlySent: 0,
-      monthlyRemaining: 1000,
+      monthlyRemaining: 50000,
 
       // Domain list — NO API keys exposed (backend handles auth)
       domains: [
@@ -776,7 +861,7 @@ export default {
 
     allEmails() {
       return this.emailInput
-        .split(/[\n,\s]+/)
+        .split(/[,\s]+/)
         .map((email) => email.trim())
         .filter((email) => email)
     },
@@ -829,7 +914,6 @@ export default {
     displayCampaignStatus() {
       if (!this.currentCampaign) return ''
 
-      // Check if campaign is completed based on progress
       const total = this.campaignProgress?.total || 0
       const completed = this.campaignProgress?.completed || 0
 
@@ -841,7 +925,6 @@ export default {
     },
 
     estimatedCompletionTime() {
-      // Get all status counts
       const pending = this.campaignStats.pending || 0
       const distributed = this.campaignStats.distributed || 0
       const retry = this.campaignStats.pending_retry || 0
@@ -851,19 +934,14 @@ export default {
       const total = this.campaignProgress.total || 0
       const completed = sent + failed
 
-      // If nothing is queued or everything is done
       if (total === 0) return '—'
       if (completed >= total) return 'Complete!'
 
-      // Only these statuses represent work still to be done
       const totalRemaining = pending + distributed + retry
 
       if (totalRemaining <= 0) return 'Finalizing...'
 
-      // Backend rate: 54 emails/minute (distributor pulls 27 every 30s)
       const RATE_PER_MINUTE = 54
-
-      // Add 1 minute buffer for distributor cycle + worker pickup lag
       const minutes = Math.ceil(totalRemaining / RATE_PER_MINUTE) + 1
 
       if (minutes <= 1) return '< 1 min'
@@ -911,10 +989,18 @@ export default {
   mounted() {
     this.loadRecentCampaigns()
     this.loadMonthlyStats()
+    this.checkRecoveryStatus()
+    // Check recovery status every 2 minutes
+    this.recoveryCheckInterval = setInterval(() => {
+      this.checkRecoveryStatus()
+    }, 120000)
   },
 
   beforeUnmount() {
     this.stopPolling()
+    if (this.recoveryCheckInterval) {
+      clearInterval(this.recoveryCheckInterval)
+    }
   },
 
   methods: {
@@ -928,7 +1014,6 @@ export default {
         .join(' ')
     },
 
-    // CHANGED: Added copyCampaignId method
     async copyCampaignId() {
       const id = this.currentCampaign?.campaignId || this.currentCampaignId
       if (!id) return
@@ -941,7 +1026,6 @@ export default {
         }, 2000)
       } catch (err) {
         console.error('Failed to copy campaign ID:', err)
-        // Fallback for older browsers
         const textArea = document.createElement('textarea')
         textArea.value = id
         document.body.appendChild(textArea)
@@ -955,12 +1039,95 @@ export default {
       }
     },
 
+    // Check if there are stuck emails that need recovery
+    async checkRecoveryStatus() {
+      try {
+        // We can't directly query distributed emails without an index,
+        // so we'll check the current campaign for long-pending emails
+        // or use a simpler heuristic
+
+        // For now, show recovery banner if there are pending emails
+        // in recent campaigns that have been sitting for a while
+        if (this.recentCampaigns.length === 0) {
+          this.recoveryStatus.show = false
+          return
+        }
+
+        const latestCampaign = this.recentCampaigns[0]
+        if (!latestCampaign) {
+          this.recoveryStatus.show = false
+          return
+        }
+
+        // If latest campaign is not completed and was created > 30 min ago
+        const createdAt = latestCampaign.createdAt
+        let campaignDate
+        if (createdAt?.toDate) campaignDate = createdAt.toDate()
+        else if (createdAt?.seconds) campaignDate = new Date(createdAt.seconds * 1000)
+        else if (typeof createdAt === 'string') campaignDate = new Date(createdAt)
+        else campaignDate = new Date(createdAt)
+
+        const minutesSince = (Date.now() - campaignDate.getTime()) / (60 * 1000)
+        const isCompleted =
+          latestCampaign.status === 'completed' ||
+          latestCampaign.notificationSent === true ||
+          latestCampaign.completedAt
+
+        if (!isCompleted && minutesSince > 30) {
+          this.recoveryStatus = {
+            show: true,
+            type: 'warning',
+            title: 'Stuck Emails Detected',
+            message: `Campaign "${latestCampaign.subject}" has been running for ${Math.floor(minutesSince)} minutes. Some emails may be stuck and need recovery.`,
+          }
+        } else if (!isCompleted && minutesSince > 10) {
+          this.recoveryStatus = {
+            show: true,
+            type: 'info',
+            title: 'Campaign In Progress',
+            message: `Campaign "${latestCampaign.subject}" is still processing. If it seems stuck after 30 minutes, run recovery.`,
+          }
+        } else {
+          this.recoveryStatus.show = false
+        }
+      } catch (err) {
+        console.error('Recovery status check failed:', err)
+        this.recoveryStatus.show = false
+      }
+    },
+
+    async runRecovery() {
+      this.recoveryLoading = true
+      try {
+        const result = await triggerRecovery()
+        const data = result.data || result
+
+        this.messageType = 'success'
+        this.messageTitle = 'Recovery Started'
+        this.message = data.message || 'Recovery job has been queued. Check back in a few minutes.'
+
+        // Hide recovery banner temporarily
+        this.recoveryStatus.show = false
+
+        // Refresh campaigns after a delay
+        setTimeout(() => {
+          this.loadRecentCampaigns()
+        }, 5000)
+      } catch (err) {
+        console.error('Recovery failed:', err)
+        this.messageType = 'error'
+        this.messageTitle = 'Recovery Failed'
+        this.message = err.message || 'Failed to start recovery. Please try again.'
+      } finally {
+        this.recoveryLoading = false
+      }
+    },
+
     async submitEmails() {
       this.loading = true
       this.message = ''
 
       try {
-        // Check monthly limit before sending
         if (this.wouldExceedLimit) {
           throw new Error(
             `Monthly limit exceeded. You can only send ${this.emailsThatCanBeSent} more emails this month.`,
@@ -982,17 +1149,15 @@ export default {
 
         console.log('✅ Campaign queued:', result)
 
-        // Firebase callable Functions wrap response in result.data
         const data = result.data || result
         this.currentCampaignId = data.campaignId
         this.messageType = 'success'
         this.messageTitle = 'Campaign Queued Successfully!'
         this.message = `${data.queued} emails queued. Sending at ~3240/hour rate. You will receive a completion email at deliveryme69@gmail.com`
 
-        // Start polling immediately with the new campaign ID
         this.startPolling(this.currentCampaignId)
         await this.loadRecentCampaigns()
-        await this.loadMonthlyStats() // Refresh monthly stats
+        await this.loadMonthlyStats()
       } catch (error) {
         console.error('❌ Error:', error)
         this.messageType = 'error'
@@ -1035,7 +1200,6 @@ export default {
         const result = await getCampaignStatus({ campaignId })
         console.log('Poll result:', result)
 
-        // Firebase callable Functions wrap response in result.data
         const data = result.data || result
 
         if (!data || !data.campaign) {
@@ -1058,7 +1222,7 @@ export default {
               `Completion email sent to deliveryme69@gmail.com. ` +
               `Questions? Contact support.`
           }
-          await this.loadMonthlyStats() // Refresh stats on completion
+          await this.loadMonthlyStats()
         }
       } catch (err) {
         console.error('Poll error:', err)
@@ -1070,6 +1234,8 @@ export default {
         const result = await getCampaigns()
         const data = result.data || result
         this.recentCampaigns = data.campaigns || []
+        // Check recovery status after loading campaigns
+        this.checkRecoveryStatus()
       } catch (err) {
         console.error('Failed to load campaigns:', err)
       }
@@ -1085,35 +1251,23 @@ export default {
       this.startPolling(this.currentCampaignId)
     },
 
-    // CHANGED: Improved formatDate to better handle all Firestore timestamp formats
     formatDate(timestamp) {
       if (!timestamp) return 'Unknown'
 
       try {
         let date
 
-        // Firestore Timestamp object with toDate()
         if (timestamp.toDate && typeof timestamp.toDate === 'function') {
           date = timestamp.toDate()
-        }
-        // Firestore Timestamp with _seconds and _nanoseconds (newer SDK format)
-        else if (timestamp._seconds !== undefined) {
+        } else if (timestamp._seconds !== undefined) {
           date = new Date(timestamp._seconds * 1000 + (timestamp._nanoseconds || 0) / 1000000)
-        }
-        // Firestore Timestamp with seconds/nanoseconds (older SDK format)
-        else if (timestamp.seconds !== undefined) {
+        } else if (timestamp.seconds !== undefined) {
           date = new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds || 0) / 1000000)
-        }
-        // ISO string
-        else if (typeof timestamp === 'string') {
+        } else if (typeof timestamp === 'string') {
           date = new Date(timestamp)
-        }
-        // Number (milliseconds)
-        else if (typeof timestamp === 'number') {
+        } else if (typeof timestamp === 'number') {
           date = new Date(timestamp)
-        }
-        // Already a Date object
-        else if (timestamp instanceof Date) {
+        } else if (timestamp instanceof Date) {
           date = timestamp
         } else {
           return 'Unknown'
@@ -1146,7 +1300,6 @@ export default {
     getCampaignDisplayStatus(campaign) {
       if (!campaign) return 'queued'
 
-      // Check if campaign is completed (backend sets these when done)
       if (campaign.status === 'completed') {
         return 'completed'
       }
@@ -1166,11 +1319,10 @@ export default {
         const data = result.data || result
 
         this.monthlySent = data.sent || 0
-        this.monthlyLimit = data.limit || 1000
-        this.monthlyRemaining = data.remaining || 1000
+        this.monthlyLimit = data.limit || 50000
+        this.monthlyRemaining = data.remaining || 50000
       } catch (err) {
         console.error('Failed to load monthly stats:', err)
-        // Fallback: calculate from recent campaigns
         this.calculateLocalMonthlyStats()
       }
     },
@@ -1191,7 +1343,6 @@ export default {
 
         const campaignMonthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
         if (campaignMonthKey === currentMonthKey) {
-          // FIXED: Count only successfully sent emails, not total queued
           sentThisMonth += campaign.stats?.sent || campaign.totalEmails || 0
         }
       })
