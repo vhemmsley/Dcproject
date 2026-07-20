@@ -816,9 +816,9 @@ export default {
       recoveryLoading: false,
 
       // Monthly limit tracking
-      monthlyLimit: 50000,
+      monthlyLimit: 1000,
       monthlySent: 0,
-      monthlyRemaining: 50000,
+      monthlyRemaining: 1000,
 
       // Domain list — NO API keys exposed (backend handles auth)
       domains: [

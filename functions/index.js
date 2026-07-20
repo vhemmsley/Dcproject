@@ -1091,7 +1091,7 @@ exports.getMonthlyStats = onCall(
         sent = monthlyDoc.data().sent || 0
       }
 
-      const limit = 50000
+      const limit = 1000
       const remaining = Math.max(0, limit - sent)
       const percentage = Math.min(100, Math.round((sent / limit) * 100))
 
