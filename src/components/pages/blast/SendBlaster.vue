@@ -1319,8 +1319,8 @@ export default {
         const data = result.data || result
 
         this.monthlySent = data.sent || 0
-        this.monthlyLimit = data.limit || 50000
-        this.monthlyRemaining = data.remaining || 50000
+        this.monthlyLimit = data.limit || 1000
+        this.monthlyRemaining = data.remaining || 1000
       } catch (err) {
         console.error('Failed to load monthly stats:', err)
         this.calculateLocalMonthlyStats()
